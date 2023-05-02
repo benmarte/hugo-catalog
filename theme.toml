@@ -3,7 +3,7 @@
 
 name = "Hugo Catalog"
 license = "MIT"
-licenselink = "https://github.com/benmarte/hugo-catalog/LICENSE"
+licenselink = "https://github.com/benmarte/hugo-catalog/blob/main/LICENSE"
 description = ""
 homepage = "https://github.com/benmarte/hugo-catalog"
 tags = ["Hugo Catalog", "Hugo", "Decap", "Styleguide"]
