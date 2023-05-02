@@ -36,7 +36,7 @@
       </a>
 
       {{if eq .Site.Params.enableSubNav true}}
-        {{ if eq $page.Permalink.Permalink }}{{.TableOfContents}}{{end}}
+        {{ if eq $page.Permalink .Permalink }}{{.TableOfContents}}{{end}}
       {{end}}
     </li>
     {{end}}
