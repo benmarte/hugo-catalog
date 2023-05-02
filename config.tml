@@ -20,3 +20,7 @@ title = true
     fontFamily = "Montserrat"
     # enables subnav page links in nav
     enableSubNav = true
+
+[module]
+  [module.hugoVersion]
+    extended = true
