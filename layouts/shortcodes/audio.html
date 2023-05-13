@@ -1,13 +1,10 @@
 {{$src := .Get "src"}}
-{{$title := .Get "title"}}
-{{$autoplay := .Get
-"autoplay"}}
-{{$loop := .Get "loop"}}
-{{$span := .Get "span"}}
+{{$title := .Get "title" | default "undefined"}}
+{{$span := .Get "span" | default 6}}
 
 <div class="span-{{$span}}">
   <div class="audio-shortcode">
-    {{with $title}}
+    {{if ne $title "undefined"}}
     <p>{{$title}}</p>
     {{end}}
     <audio src="{{$src}}" controls></audio>

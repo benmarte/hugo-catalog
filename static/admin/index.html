@@ -6,9 +6,769 @@
     <title>Content Manager</title>
     <!-- Include the script that enables Netlify Identity on this page. -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
+    <style>
+      [data-slate-editor] { 
+        -webkit-user-modify: read-write !important; 
+    }
+    </style>
   </head>
   <body>
     <!-- Include the script that builds the page and powers Decap CMS -->
     <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+    <script>
+
+      //  Start Audio Widget ------------------------------------------------------------------- /
+
+      const AudioWidget = {
+        // Internal id of the component
+        id: "audio-widget",
+        // Visible label
+        label: "Audio",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "src",
+            label: "Source",
+            widget: "string",
+            required: true,
+          },
+          {
+            name: "title",
+            label: "Title",
+            widget: "string",
+            required: false,
+          },
+          {
+            name: "span",
+            label: "Span",
+            widget: "select",
+            required: true,
+            options: ["1", "2", "3", "4", "5", "6"],
+            default: ["6"]
+          },
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          return {
+            src: match[1],
+            title: match[2],
+            span: match[3],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          // {{<audio src="https://samplelib.com/lib/preview/mp3/sample-6s.mp3" span="3" title="6-second synth melody">}}
+          return `{{<audio src="${data.src}" span="${data.span}" ${
+            data.title !== "undefined" && `title="${data.title}"`
+          }>}}`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          return `<div class="span-${span}"><div class="audio-shortcode">${
+            data.title !== "undefined" && `<p>${data.title}</p>`
+          }<audio src="${data.src}" controls></audio></div></div>`;
+        },
+      };
+
+      //  End Audio Widget ------------------------------------------------------------------- /
+
+      //  Start Bullet Widget ------------------------------------------------------------------- /
+
+      const BulletWidget = {
+        // Internal id of the component
+        id: "bullet-widget",
+        // Visible label
+        label: "Bullet",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "leadingText",
+            label: "Leading Text",
+            widget: "string",
+            required: false,
+          },
+          {
+            name: "text",
+            label: "Text",
+            widget: "string",
+            required: true,
+          },
+          {
+            name: "type",
+            label: "Type",
+            widget: "select",
+            options: ["do", "dont"],
+            default: ["do"],
+          },
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          return {
+            leadingText: match[1],
+            text: match[2],
+            type: match[3],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          // {{<audio src="https://samplelib.com/lib/preview/mp3/sample-6s.mp3" span="3" title="6-second synth melody">}}
+          return `{{<bullet type="${data.type}" ${
+            data.leadingText !== "undefined" &&
+            `leadingText="${data.leadingText}"`
+          } ${data.text !== "undefined" && `text="${data.text}"`}>}}`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          return `<div class="bullet">${
+            data.type === "do"
+              ? `<i class="fa-regular fa-circle-check success"></i>`
+              : `<i class="far fa-window-close danger"></i>`
+          }
+            <div>${
+              data.leadingText !== "undefined" && `<b>${data.leadingText}</b>`
+            }
+            ${data.text !== "undefined" && data.text}
+            </div></div>`;
+        },
+      };
+
+      //  End Bullet Widget ------------------------------------------------------------------- /
+
+      //  Start Color Widget ------------------------------------------------------------------- /
+
+      const ColorWidget = {
+        // Internal id of the component
+        id: "color-widget",
+        // Visible label
+        label: "Color",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "name",
+            label: "Name",
+            widget: "string",
+            required: true,
+          },
+          {
+            name: "span",
+            label: "Span",
+            widget: "select",
+            required: true,
+            options: ["1", "2", "3", "4", "5", "6"],
+            default: ["6"]
+          },
+          {
+            name: "hex",
+            label: "Hex",
+            widget: "color",
+            allowInput: true,
+            default: "transparent",
+            required: true,
+          },
+          {
+            name: "rgb",
+            label: "RGB",
+            widget: "string",
+            required: false,
+          },
+          {
+            name: "pantone",
+            label: "Pantone",
+            widget: "string",
+            required: false,
+          },
+          {
+            name: "cmyk",
+            label: "CMYK",
+            widget: "string",
+            required: false,
+          },
+          {
+            name: "mui",
+            label: "MUI",
+            widget: "string",
+            required: false,
+          },
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          return {
+            name: match[1],
+            span: match[2],
+            hex: match[3],
+            rgb: match[4],
+            pantone: match[5],
+            cmyk: match[6],
+            mui: match[7],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          // {{<audio src="https://samplelib.com/lib/preview/mp3/sample-6s.mp3" span="3" title="6-second synth melody">}}
+          return `{{<color span="${data.span}" name="${data.name}" hex="${data.hex}" rgb="${data.rgb}" pantone="${data.pantone}" cmyk="${data.cmyk}" mui="${data.mui}" >}}`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          return `<div class="span-${span}">
+          <div class="color-shortcode" style="background: ${data.hex}"></div>
+            ${
+              data.name !== "undefined" &&
+              `<p>
+                  <b>${data.name}</b>
+                </p>`
+            }
+            ${
+              data.hex !== "undefined" &&
+              `<p>
+                  <b>HEX:</b> ${data.hex}
+                </p>`
+            }
+            ${
+              data.rgb !== "undefined" &&
+              `<p>
+                  <b>RGB:</b> ${data.rgb}
+                </p>`
+            }
+            ${
+              data.pantone !== "undefined" &&
+              `<p>
+                  <b>Pantone:</b> ${data.pantone}
+                </p>`
+            }
+            ${
+              data.cmyk !== "undefined" &&
+              `<p>
+                  <b>CMYK:</b> ${data.cmyk}
+                </p>`
+            }
+            ${
+              data.mui !== "undefined" &&
+              `<p>
+                  <b>MUI:</b> ${data.mui}
+                </p>`
+            }  
+            </div>`;
+        },
+      };
+
+      //  End Color Widget ------------------------------------------------------------------- /
+
+      //  Start Column Widget ------------------------------------------------------------------- /
+
+      const ColumnWidget = {
+        // Internal id of the component
+        id: "column-widget",
+        // Visible label
+        label: "Column",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "span",
+            label: "Span",
+            widget: "select",
+            required: true,
+            options: ["1", "2", "3", "4", "5", "6"],
+            default: ["6"]
+          },
+          {
+            name: "color",
+            label: "Color",
+            widget: "color",
+            required: false,
+          },
+          {
+            name: "align",
+            label: "Align",
+            widget: "select",
+            options: ["left", "center", "right"],
+            default: ["left"],
+          },
+          {
+            name: "content",
+            label: "Content",
+            widget: "markdown",
+            required: true,
+          },
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          return {
+            span: match[1],
+            color: match[2],
+            align: match[3],
+            content: match[4],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          return `{{<column span="${data.span}" ${
+            data.color !== "undefined" && `color="${data.color}"`
+          } align="${data.align}">}}${data.content}{{</column>}}`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          return `<div class="span-${data.span}" style="${
+            data.color && `background:${data.color};`
+          }; ${data.align && `text-align: ${data.align};`};">${
+            data.content
+          }</div>`;
+        },
+      };
+
+      //  End Column Widget ------------------------------------------------------------------- /
+
+      //  Start Divider Title Widget ------------------------------------------------------------------- /
+
+      const DividerTitleWidget = {
+        // Internal id of the component
+        id: "divider-title-widget",
+        // Visible label
+        label: "Divider Title",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "text",
+            label: "Text",
+            widget: "string",
+            required: true,
+          },
+          {
+            name: "align",
+            label: "Align",
+            widget: "select",
+            options: ["left", "center", "right"],
+            default: ["left"],
+          },
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          return {
+            text: match[1],
+            align: match[2],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          return `{{<divider-title text="${data.text}" align="${data.align}">}}`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          return `<div class="divider-title" style="text-align: ${data.align}">${data.text}</div>`;
+        },
+      };
+
+      //  End Divider Title Widget ------------------------------------------------------------------- /
+
+      //  Start Download Widget ------------------------------------------------------------------- /
+
+      const DownloadWidget = {
+        // Internal id of the component
+        id: "download-widget",
+        // Visible label
+        label: "Download",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "title",
+            label: "Title",
+            widget: "string",
+            required: true,
+          },
+          {
+            name: "span",
+            label: "Span",
+            widget: "select",
+            required: true,
+            options: ["1", "2", "3", "4", "5", "6"],
+            default: ["6"]
+          },
+          {
+            name: "url",
+            label: "File",
+            widget: "file",
+            required: true,
+            media_library: {
+              config: {
+                allow_multiple: false,
+                media_folder: "/static/downloads",
+              },
+            },
+          },
+          {
+            name: "subtitle",
+            label: "Subtitle",
+            widget: "string",
+            required: false,
+          },
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          return {
+            title: match[1],
+            span: match[2],
+            url: match[3],
+            subtitle: match[4],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          console.log({data});
+          return `{{<download span="${data.span}" title="${data.title}" url="${data.url}" subtitle="${data.subtitle}">}}`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          console.log({data})
+          return `<div class="span-${data.span}">
+            <a class="download" href="${data.url}" target="_blank" rel="no-follow no-referrer">
+                <div class="download-icon">
+                    <i class="fa-regular fa-circle-down"></i>
+                </div>
+                <div class="download-details">
+                    <div><b>${data.title}</b></div>
+                    ${data.subtitle !== "undefined" && `<div>${data.subtitle}</div>`}
+                </div>
+            </a>
+        </div>`;
+        },
+      };
+
+      //  End Download Widget ------------------------------------------------------------------- /
+
+      //  Start Hint Widget ------------------------------------------------------------------- /
+
+      const HintWidget = {
+        // Internal id of the component
+        id: "hint-widget",
+        // Visible label
+        label: "Hint",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "type",
+            label: "Type",
+            widget: "select",
+            options: ["info", "success", "warning", "danger"],
+            default: ["info"],
+            required: true,
+          },
+          {
+            name: "span",
+            label: "Span",
+            widget: "select",
+            required: true,
+            options: ["1", "2", "3", "4", "5", "6"],
+            default: ["6"],
+          },
+          {
+          name: "content",
+          label: "Content",
+          widget: "markdown",
+          required: true,
+        }
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          return {
+            type: match[1],
+            span: match[1],
+            content: match[1],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          return `{{<hint type="${data.type}" span="${data.span}">}}${data.content}{{</hint>}}`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          return `<div class="span-${data.span} hint-shortcode ${data.type}">${data.content}</div>`;
+        },
+      };
+
+      //  End Hint Widget ------------------------------------------------------------------- /
+
+      //  Start Image Widget ------------------------------------------------------------------- /
+
+      const ImageWidget = {
+        // Internal id of the component
+        id: "image-widget",
+        // Visible label
+        label: "Catalog Image",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "src",
+            label: "File",
+            widget: "file",
+            required: true,
+            media_library: {
+              config: {
+                allow_multiple: false,
+                media_folder: "/static/downloads",
+              },
+            },
+          },
+          {
+            name: "overlay",
+            label: "Overlay",
+            widget: "file",
+            required: false,
+            media_library: {
+              config: {
+                allow_multiple: false,
+                media_folder: "/static/downloads",
+              },
+            },
+          },
+          {
+            name: "span",
+            label: "Span",
+            widget: "select",
+            required: true,
+            options: ["1", "2", "3", "4", "5", "6"],
+            default: ["6"],
+          },
+          {
+            name: "title",
+            label: "Title",
+            widget: "string",
+            required: false,
+          },
+          {
+            name: "description",
+            label: "Description",
+            widget: "string",
+            required: false,
+          },
+          {
+            name: "light",
+            label: "Light",
+            widget: "boolean",
+            default: false,
+            required: false,
+          },
+          {
+            name: "dark",
+            label: "Dark",
+            widget: "boolean",
+            default: false,
+            required: false,
+          },
+          {
+            name: "scale",
+            label: "Scale",
+            widget: "boolean",
+            default: false,
+            required: false,
+          },
+
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          console.log({match});
+          return {
+            src: match[1],
+            overlay: match[2],
+            span: match[3],
+            title: match[4],
+            description: match[5],
+            light: match[6],
+            dark: match[7],
+            scale: match[8],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          return `{{<image src="${data.src}"
+          span="${data.span}"
+          ${data.title !== "undefined" && `title="${data.title}"`}
+          ${data.description !== "undefined" && `description="${data.description}"`}
+          ${data.overlay !== "undefined" && `overlay="${data.overlay}"`}
+          ${data.light !== "false" && `light="${data.light}"`}
+          ${data.dark !== "false" && `dark="${data.dark}"`}
+          ${data.scale !== "false" && `scale="${data.scale}"`}
+          >}}`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          return `<div
+          class="span-{{$span}} image-shortcode
+          ${data.light !== "false" && "light"}
+          ${data.dark !== "false" && "dark"}
+          ${data.scale !== "false" && "no-scale"}
+        >
+          <div ${data.overlay !== "undefined" && `class="source"`}>
+            <img src="${data.src}" />
+          </div>
+          ${data.overlay !== "undefined" && `<div class="overlay"><img src="${data.overlay}" /></div>`}
+          ${data.title !== "undefined" && `<p><b>${data.title}</b></p>`}
+          ${data.description !== "undefined" && `<p>${data.description}</p>`}
+        </div>`;
+        },
+      };
+
+      //  End Image Widget ------------------------------------------------------------------- /
+
+      //  Start Video Widget ------------------------------------------------------------------- /
+
+      const VideoWidget = {
+        // Internal id of the component
+        id: "video-widget",
+        // Visible label
+        label: "Video",
+        // Fields the user need to fill out when adding an instance of the component
+        fields: [
+          {
+            name: "src",
+            label: "File",
+            widget: "file",
+            required: true,
+            media_library: {
+              config: {
+                allow_multiple: false,
+                media_folder: "/static/downloads",
+              },
+            },
+          },
+          {
+            name: "span",
+            label: "Span",
+            widget: "select",
+            required: true,
+            options: ["1", "2", "3", "4", "5", "6"],
+            default: ["6"],
+          },
+          {
+            name: "muted",
+            label: "Muted",
+            widget: "boolean",
+            default: false,
+          },
+          {
+            name: "autoplay",
+            label: "Auto Play",
+            widget: "boolean",
+            default: false,
+          },
+          {
+            name: "loop",
+            label: "Loop",
+            widget: "boolean",
+            default: false,
+          },
+          {
+            name: "poster",
+            label: "Poster",
+            widget: "image",
+            required: false,
+            media_library: {
+              config: {
+                allow_multiple: false,
+                media_folder: "/static/downloads",
+              },
+            },
+          },
+        ],
+        // This is used to populate the custom widget in the markdown editor in the CMS.
+        fromBlock: function (match) {
+          console.log({match});
+          return {
+            src: match[1],
+            span: match[2],
+            muted: match[3],
+            autoplay: match[4],
+            loop: match[5],
+            poster: match[6],
+          };
+        },
+        // Given an object with one property for each field defined in `fields`,
+        // return the string you wish to be inserted into your markdown.
+        //
+        // This is used to serialize the data from the custom widget to the
+        // markdown document
+        toBlock: function (data) {
+          {{/*  return `{{<video src="${data.src}" span="${data.span}" autoplay="${data.autoplay}" muted="${data.muted}" loop="${data.loop}" poster="${data.poster}">}}`;  */}}
+            return `
+          <div class="span-${data.span}">
+            <video
+            ${data.poster !== "undefined" && `poster="${data.poster}"`}}
+            ${data.loop !== "false" && `loop`}}
+            ${data.autoplay !== "false" && `autoplay`}}
+            ${data.muted !== "false" && `muted`}}
+            controls>
+                <source src="${data.src}"></source>
+            </video>
+          </div>`;
+        },
+        // Preview output for this component. Can either be a string or a React component
+        // (component gives better render performance)
+        toPreview: function (data) {
+          return `{{<video src="${data.src}" span="${data.span}" autoplay="${data.autoplay}" muted="${data.muted}" loop="${data.loop}" poster="${data.poster}">}}`;
+          {{/*  return `
+          <div class="span-${data.span}">
+            <video
+            ${data.poster !== "undefined" && `poster="${data.poster}"`}}
+            ${data.loop !== "false" && `loop`}}
+            ${data.autoplay !== "false" && `autoplay`}}
+            ${data.muted !== "false" && `muted`}}
+            controls>
+                <source src="${data.src}"></source>
+            </video>
+          </div>`;  */}}
+        },
+      };
+
+      //  End Video Widget ------------------------------------------------------------------- /
+
+      CMS.registerEditorComponent(DividerTitleWidget);
+      CMS.registerEditorComponent(ColumnWidget);
+      CMS.registerEditorComponent(AudioWidget);
+      CMS.registerEditorComponent(BulletWidget);
+      CMS.registerEditorComponent(ColorWidget);
+      CMS.registerEditorComponent(DownloadWidget);
+      CMS.registerEditorComponent(HintWidget);
+      CMS.registerEditorComponent(VideoWidget);
+      CMS.registerEditorComponent(ImageWidget);
+    </script>
   </body>
 </html>

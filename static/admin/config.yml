@@ -2,11 +2,11 @@ backend:
   # backend to use
   name: github
   # your github repo ex: benmarte/hugo-catalog
-  repo: github-user-name/repo
+  repo: benmarte/hugo-catalog-site
   # optional, defaults to master
   branch: main
   # your netlify site name ex: netlify-site-name.netlify.app
-  site_domain: netlify-site-name.netlify.app
+  site_domain: hugo-catalog.netlify.app
   # required for pkce - uncomment if using gitlab pages
   # auth_type: pkce
   # application ID from your GitLab OAuth App - uncomment if using gitlab pages
@@ -31,6 +31,18 @@ collections:
     label: "Pages"
     # directory with markdow files
     folder: "/content"
+    create: true
+    # the filename will be used to generate the url to the page
+    slug: "{{slug}}"
+    # fields accessible in decap when creating or editing a page
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown" }
+  - name: "Prueba"
+    # label displayed in decap under collections
+    label: "Prueba"
+    # directory with markdow files
+    folder: "/content/prueba"
     create: true
     # the filename will be used to generate the url to the page
     slug: "{{slug}}"

@@ -1,7 +1,11 @@
 {{$url := .Get "url"}}
+{{$containsStatic := strings.Contains $url "/static"}}
+{{if ne $containsStatic true}}
+{{$url = printf "/static%s" $url}}
+{{end}}
 {{$title := .Get "title"}}
-{{$subtitle := .Get "subtitle"}}
-{{$span := .Get "span"}}
+{{$subtitle := .Get "subtitle" | default "undefined"}}
+{{$span := .Get "span" | default 6}}
 {{$bytes := float (os.Stat $url).Size }}
 {{$k := 1024}}
 {{$dm := 2}}
@@ -9,17 +13,20 @@
 {{$i := math.Floor (div (math.Log $bytes) (math.Log $k))}}
 {{$fileSize := div $bytes (math.Pow $k $i)}}
 {{$sizeType := index $sizes (int $i)}}
-
+{{$fileURL := replace $url "/static/" "/" }}
 
 <div class="span-{{$span}}">
-    <a class="download" href="{{replace $url "/static/" "/"}}" target="_blank" rel="no-follow no-referrer">
+    <a class="download" href="{{$fileURL}}" target="_blank" rel="no-follow no-referrer">
         <div class="download-icon">
             <i class="fa-regular fa-circle-down"></i>
         </div>
         <div class="download-details">
             <div><b>{{$title}}</b></div>
-            <div>{{with $subtitle}}{{$subtitle}}{{else}}{{$fileSize | lang.FormatNumber 2}} {{$sizeType}}{{end}}</div>
+            {{if ne $subtitle "undefined"}}
+                <div>{{$subtitle}}</div>
+            {{else}}
+                <div>{{$fileSize | lang.FormatNumber 2}} {{$sizeType}}</div>
+            {{end}}
         </div>
-    
     </a>
 </div>
