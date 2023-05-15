@@ -5,7 +5,7 @@
   width: 100%;
 
   i {
-    margin: 4px 10px 0 0;
+    margin: 3px 10px 0 0;
   }
 
   .success {
@@ -14,5 +14,11 @@
 
   .danger {
     color: $danger-dark;
+  }
+}
+
+.frame-content {
+  .bullet {
+    margin: 16px 0;
   }
 }
